@@ -16,25 +16,13 @@ bot.on('message', (msg) => {
 bot.onText(/\/start/, (msg) => {
   const opts = {
     reply_markup: {
+      // keyboard: [
       inline_keyboard: [
         [{ text: 'Sign up', web_app: {url: webAppUrl} }]
       ]
     }
   };
+
+  console.log(`User's id is ${msg.from.id}`);
   bot.sendMessage(msg.chat.id, 'Please, sign up', opts);
 });
-
-
-
-// bot.onText(/\/start/, (msg) => {
-//   const opts = {
-//     reply_markup: {
-//       keyboard: [
-//         [
-//           { text: 'Sign up', web_app: {url: webAppUrl} }
-//         ]
-//       ]
-//     }
-//   };
-//   bot.sendMessage(msg.chat.id, 'Select from menu', opts);
-// });
