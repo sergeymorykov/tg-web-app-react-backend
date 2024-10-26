@@ -6,7 +6,7 @@ from sklearn.cluster import KMeans
 from umap import UMAP
 import os
 
-project_path: str = './'
+project_path: str = '.'
 
 # Visualize the 2D space of the new features
 def save_png(X_umap, Y_pred, id_user: int = 0):
