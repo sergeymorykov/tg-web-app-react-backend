@@ -1,27 +1,29 @@
 
-import matplotlib.pyplot as plt
 import numpy as np
-# import pandas as pd
-from sklearn.cluster import KMeans
-from umap import UMAP
 import os
 
-project_path: str = '.'
+project_path: str = 'C:/Users/ASUS/OneDrive/CODES/nodeJS/tg-web-app-react-backend/DB'
 
 # Visualize the 2D space of the new features
 def save_png(X_umap, Y_pred, id_user: int = 0):
+
+    import matplotlib.pyplot as plt
+
     fig, ax = plt.subplots()
     ax.scatter(X_umap[:, 0], X_umap[:, 1], c=np.array(Y_pred))
     ax.set_xlabel('umap Component 1')
     ax.set_ylabel('umap Component 2')
     user_x, user_y = X_umap[id_user, 0], X_umap[id_user, 1]
-    ax.scatter(user_x, user_y, c='white', s=25)
+    ax.scatter(user_x, user_y, c='black', s=15)
     ax.annotate('you', (user_x, user_y), textcoords="offset points", xytext=(0,10), ha='center')
     plt.savefig(f'{project_path}/umap.png')
 
 
 def clusterize(data: np.ndarray, id_user: int = 0) -> np.ndarray:
-    maxNumOfClusters = int(data.shape[0] / 2)
+
+    from sklearn.cluster import KMeans
+
+    maxNumOfClusters = int(data.shape[0] / 4)
     optimalNumOfClusters = 1
     if maxNumOfClusters > 1:
         startError = KMeans(n_clusters=1).fit(data).inertia_
@@ -49,7 +51,6 @@ def read_data() -> np.ndarray:
         database = json.load(file)
 
     data = [user['interests_values'] for user in database]
-    # data = pd.read_json(f'{project_path}/data100.json').values.transpose()
     if data is None:
         print('error: no data')
         exit()
@@ -57,11 +58,22 @@ def read_data() -> np.ndarray:
     return np.array(data)
 
 
+def read_sample_data() -> np.ndarray:
+
+    import pandas as pd
+
+    data = pd.read_json(f'{project_path}/data100.json').values.transpose()
+    return data
+
+
 def clusterization():
     data = read_data()
     print(data)
     id_user = data.shape[0] - 1
     Y_pred = clusterize(data, id_user)
+
+    from umap import UMAP
+
     X_umap = UMAP().fit_transform(data)
     np.save(f'{project_path}/X_umap', X_umap)
     np.save(f'{project_path}/Y_pred', Y_pred)
@@ -74,10 +86,14 @@ if __name__ == '__main__':
         Y_pred = np.load(f'{project_path}/Y_pred.npy')
         save_png(X_umap, Y_pred)
     else:
-        data = read_data()
+        # data = read_data()
+        data = read_sample_data()
         print(data)
         id_user = data.shape[0] - 1
         Y_pred = clusterize(data, id_user)
+        
+        from umap import UMAP
+
         X_umap = UMAP().fit_transform(data)
         np.save(f'{project_path}/X_umap', X_umap)
         np.save(f'{project_path}/Y_pred', Y_pred)
